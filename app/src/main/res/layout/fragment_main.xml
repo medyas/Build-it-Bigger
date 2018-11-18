@@ -19,7 +19,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/instructions_text_view"
+        android:layout_alignStart="@+id/instructions_text_view"
+        android:layout_alignLeft="@+id/instructions_text_view"
+        android:layout_marginStart="0dp"
         android:onClick="tellJoke"
+        android:layout_marginLeft="0dp"
         android:text="@string/button_text" />
 
     <com.google.android.gms.ads.AdView
