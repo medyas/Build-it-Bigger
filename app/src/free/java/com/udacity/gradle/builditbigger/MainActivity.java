@@ -17,6 +17,10 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -44,6 +48,11 @@ public class MainActivity extends AppCompatActivity {
     private Dialog dialog ;
     private EndpointsAsyncTask task;
 
+    private InterstitialAd mInterstitialAd;
+    private AdView mAdView;
+
+
+
 
     @Nullable
     private SimpleIdlingResource mIdlingResource  = null;
@@ -66,8 +75,26 @@ public class MainActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("Build it Bigger");
+        MobileAds.initialize(this,
+                "ca-app-pub-3940256099942544~3347511713");
 
-        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                // Load the next interstitial.
+                mInterstitialAd.loadAd(new AdRequest.Builder().build());
+            }
+
+        });
+
 
         jokes = new JokesClass();
 
@@ -183,6 +210,13 @@ public class MainActivity extends AppCompatActivity {
             }
 
             dialog.dismiss();
+
+            if (mInterstitialAd.isLoaded()) {
+                mInterstitialAd.show();
+            } else {
+                Log.d("TAG", "The interstitial wasn't loaded yet.");
+            }
+
         }
     }
 
