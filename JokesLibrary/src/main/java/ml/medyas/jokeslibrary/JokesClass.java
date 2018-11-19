@@ -4,30 +4,33 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class JokesClass {
+public class JokesClass implements Serializable {
     private JokeListClass jokes;
     private Random rand;
+
+
 
     public JokesClass() {
         rand = new Random();
         jokes = new JokeListClass();
-        Type listType = new TypeToken<List<JokeListClass.JokeClass>>() {
+        Type listType = new TypeToken<List<JokeClass>>() {
         }.getType();
         Gson gson = new GsonBuilder().create();
-        jokes.setJokesList((List<JokeListClass.JokeClass>) gson.fromJson(jokesJson, listType));
+        List<JokeClass> l = gson.fromJson(jokesJson, listType);
+        jokes.setJokesList(l);
     }
 
-    public JokeListClass.JokeClass getJoke() {
+    public JokeClass getRandomJoke() {
         return jokes.getJokesList().get(rand.nextInt(jokes.getJokesList().size()));
     }
 
-    public String getRandomJoke() {
-        JokeListClass.JokeClass joke = getJoke();
+    public String getRandomJokeAsString() {
+        JokeClass joke = getRandomJoke();
         return joke.getSetup()+" \n"+joke.getPunchline();
     }
 
