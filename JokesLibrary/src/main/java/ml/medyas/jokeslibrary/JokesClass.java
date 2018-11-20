@@ -10,28 +10,27 @@ import java.util.List;
 import java.util.Random;
 
 public class JokesClass implements Serializable {
-    private JokeListClass jokes;
+    private JokeListClass mJoke;
     private Random rand;
-
 
 
     public JokesClass() {
         rand = new Random();
-        jokes = new JokeListClass();
+        mJoke = new JokeListClass();
         Type listType = new TypeToken<List<JokeClass>>() {
         }.getType();
         Gson gson = new GsonBuilder().create();
         List<JokeClass> l = gson.fromJson(jokesJson, listType);
-        jokes.setJokesList(l);
+        mJoke.setJokesList(l);
     }
 
     public JokeClass getRandomJoke() {
-        return jokes.getJokesList().get(rand.nextInt(jokes.getJokesList().size()));
+        return mJoke.getJokesList().get(rand.nextInt(mJoke.getJokesList().size()));
     }
 
     public String getRandomJokeAsString() {
         JokeClass joke = getRandomJoke();
-        return joke.getSetup()+" \n"+joke.getPunchline();
+        return joke.getSetup() + " \n" + joke.getPunchline();
     }
 
     private static final String jokesJson = "[\n" +

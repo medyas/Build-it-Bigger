@@ -18,7 +18,7 @@ import static junit.framework.TestCase.assertTrue;
 @RunWith(AndroidJUnit4.class)
 public class EndPointTest implements EndpointsAsyncTask.EndpointsAsyncTaskInterface {
 
-    CountDownLatch latch;
+    private CountDownLatch latch;
 
     @Test
     public void testEndPointTask() throws InterruptedException {

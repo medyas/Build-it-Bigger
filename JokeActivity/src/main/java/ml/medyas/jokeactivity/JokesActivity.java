@@ -9,8 +9,6 @@ import android.widget.TextView;
 
 public class JokesActivity extends AppCompatActivity {
 
-    private TextView textSetup, textPunchline;
-    private Toolbar toolbar;
     private String jokeSetup = "";
     private String jokePunchline = "";
 
@@ -18,7 +16,7 @@ public class JokesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jokes);
-        toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -39,8 +37,8 @@ public class JokesActivity extends AppCompatActivity {
             }
         }
 
-        textSetup = (TextView) findViewById(R.id.text_setup);
-        textPunchline = (TextView) findViewById(R.id.text_punchline);
+        TextView textSetup = findViewById(R.id.text_setup);
+        TextView textPunchline = findViewById(R.id.text_punchline);
 
         textSetup.setText(jokeSetup);
         textPunchline.setText(jokePunchline);

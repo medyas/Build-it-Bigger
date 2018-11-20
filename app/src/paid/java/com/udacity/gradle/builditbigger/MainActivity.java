@@ -29,16 +29,17 @@ import ml.medyas.jokeslibrary.JokeClass;
 import ml.medyas.jokeslibrary.JokesClass;
 
 public class MainActivity extends AppCompatActivity implements EndpointsAsyncTask.EndpointsAsyncTaskInterface {
-    private JokesClass jokes;
-    private Toolbar toolbar;
-    private Dialog dialog ;
+    private Dialog dialog;
     private EndpointsAsyncTask task;
+    public static final String JOKE_SETUP = "jokeSetup";
+    public static final String JOKE_PUNCHLINE = "jokePunchline";
 
 
     @Nullable
-    private SimpleIdlingResource mIdlingResource  = null;
+    private SimpleIdlingResource mIdlingResource = null;
+
     public SimpleIdlingResource getIdlingResource() {
-        if(mIdlingResource == null) {
+        if (mIdlingResource == null) {
             mIdlingResource = new SimpleIdlingResource();
         }
         return mIdlingResource;
@@ -53,11 +54,10 @@ public class MainActivity extends AppCompatActivity implements EndpointsAsyncTas
             getIdlingResource().setIdleState(true);
         }
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("Build it Bigger");
 
-        jokes = new JokesClass();
 
     }
 
@@ -71,9 +71,6 @@ public class MainActivity extends AppCompatActivity implements EndpointsAsyncTas
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -85,29 +82,17 @@ public class MainActivity extends AppCompatActivity implements EndpointsAsyncTas
     }
 
     public void tellJoke(View view) {
-       /*
-        Toast.makeText(this, jokes.getRandomJoke(), Toast.LENGTH_LONG).show();
-
-        JokeListClass.JokeClass joke = jokes.getJoke();
-
-        Intent intent = new Intent(this, JokesActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString("jokeSetup", joke.getSetup());
-        bundle.putString("jokePunchline", joke.getPunchline());
-        intent.putExtras(bundle);
-        startActivity(intent);
-        */
         if (getIdlingResource() != null) {
             getIdlingResource().setIdleState(false);
         }
 
-        if(task!=null) task.cancel(true);
+        if (task != null) task.cancel(true);
         task = new EndpointsAsyncTask(this);
         task.execute();
         showDialog();
     }
 
-    public void showDialog(){
+    public void showDialog() {
         dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
@@ -123,15 +108,15 @@ public class MainActivity extends AppCompatActivity implements EndpointsAsyncTas
         Intent intent = new Intent(this, JokesActivity.class);
         Bundle bundle = new Bundle();
 
-        if(result.equals("")) {
-            bundle.putString("jokeSetup", "");
-            bundle.putString("jokePunchline", "");
-        } else {
-            Gson gson = new GsonBuilder().create();
-            JokeClass j = gson.fromJson(result, JokeClass.class);
-            bundle.putString("jokeSetup", j.getSetup());
-            bundle.putString("jokePunchline", j.getPunchline());
+        if (result.equals("")) {
+            Toast.makeText(this, R.string.error_msg, Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        Gson gson = new GsonBuilder().create();
+        JokeClass j = gson.fromJson(result, JokeClass.class);
+        bundle.putString(JOKE_SETUP, j.getSetup());
+        bundle.putString(JOKE_PUNCHLINE, j.getPunchline());
 
         intent.putExtras(bundle);
         startActivity(intent);
