@@ -70,3 +70,11 @@ dependencies {
     androidTestImplementation "com.android.support.test.espresso:espresso-intents:3.0.2"
 
 }
+
+
+task runUITest(dependsOn: [':backend:appengineStart', /*':app:build',*/':app:connectedFreeDebugAndroidTest']) {
+
+    doLast {
+        ':backend:appengineStop'
+    }
+}

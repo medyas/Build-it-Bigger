@@ -28,7 +28,7 @@ import ml.medyas.jokeactivity.JokesActivity;
 import ml.medyas.jokeslibrary.JokeClass;
 import ml.medyas.jokeslibrary.JokesClass;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements EndpointsAsyncTask.EndpointsAsyncTaskInterface {
     private JokesClass jokes;
     private Toolbar toolbar;
     private Dialog dialog ;
@@ -102,8 +102,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if(task!=null) task.cancel(true);
-        task = new EndpointsAsyncTask();
-        task.execute(new Pair<Context, String>(this, "Manfred"));
+        task = new EndpointsAsyncTask(this);
+        task.execute();
         showDialog();
     }
 
@@ -117,62 +117,30 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onDataLoaded(String result) {
 
-    class EndpointsAsyncTask extends AsyncTask<Pair<Context, String>, Void, String> {
-        private MyApi myApiService = null;
-        private Context context;
+        Intent intent = new Intent(this, JokesActivity.class);
+        Bundle bundle = new Bundle();
 
-        @Override
-        protected String doInBackground(Pair<Context, String>... params) {
-            if(myApiService == null) {  // Only do this once
-                MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),
-                        new AndroidJsonFactory(), null)
-                        // options for running against local devappserver
-                        // - 10.0.2.2 is localhost's IP address in Android emulator
-                        // - turn off compression when running against local devappserver
-                        .setRootUrl("http://10.0.2.2:8080/_ah/api/")
-                        .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-                            @Override
-                            public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
-                                abstractGoogleClientRequest.setDisableGZipContent(true);
-                            }
-                        });
-                // end options for devappserver
-
-                myApiService = builder.build();
-            }
-
-            context = params[0].first;
-
-            try {
-                return myApiService.jokeApi().execute().getData();
-            } catch (IOException e) {
-                return e.getMessage();
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            //Toast.makeText(context, result, Toast.LENGTH_LONG).show();
-            //Log.d(getClass().getName(), result);
-
+        if(result.equals("")) {
+            bundle.putString("jokeSetup", "");
+            bundle.putString("jokePunchline", "");
+        } else {
             Gson gson = new GsonBuilder().create();
             JokeClass j = gson.fromJson(result, JokeClass.class);
-
-            Intent intent = new Intent(context, JokesActivity.class);
-            Bundle bundle = new Bundle();
             bundle.putString("jokeSetup", j.getSetup());
             bundle.putString("jokePunchline", j.getPunchline());
-            intent.putExtras(bundle);
-            startActivity(intent);
-
-            if (getIdlingResource() != null) {
-                getIdlingResource().setIdleState(true);
-            }
-
-            dialog.dismiss();
         }
-    }
 
+        intent.putExtras(bundle);
+        startActivity(intent);
+
+        if (getIdlingResource() != null) {
+            getIdlingResource().setIdleState(true);
+        }
+
+        dialog.dismiss();
+    }
 }
 

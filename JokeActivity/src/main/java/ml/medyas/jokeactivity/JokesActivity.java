@@ -11,8 +11,8 @@ public class JokesActivity extends AppCompatActivity {
 
     private TextView textSetup, textPunchline;
     private Toolbar toolbar;
-    private String jokeSetup;
-    private String jokePunchline;
+    private String jokeSetup = "";
+    private String jokePunchline = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +33,10 @@ public class JokesActivity extends AppCompatActivity {
         });
 
         if (getIntent().getExtras() != null) {
-            jokeSetup = getIntent().getExtras().getString("jokeSetup");
-            jokePunchline = getIntent().getExtras().getString("jokePunchline");
+            if (getIntent().getExtras().containsKey("jokeSetup") && getIntent().getExtras().containsKey("jokePunchline") ) {
+                jokeSetup = getIntent().getExtras().getString("jokeSetup");
+                jokePunchline = getIntent().getExtras().getString("jokePunchline");
+            }
         }
 
         textSetup = (TextView) findViewById(R.id.text_setup);

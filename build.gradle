@@ -21,10 +21,3 @@ allprojects {
     }
 }
 
-
-task runUITest(dependsOn: [':backend:appengineStart', /*':app:build',*/':app:connectedFreeDebugAndroidTest']) {
-
-    doLast {
-        ':backend:appengineStop'
-    }
-}
